@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 //import { useNavigate } from 'react-router-dom'
 import serviceLogin from '../services/serviceLogin'
 
@@ -15,6 +15,11 @@ type Field = {
 type Form = {
   username: Field
   password: Field
+}
+
+type StatusProps = {
+  username: string;
+  status: string;
 }
 
 type VerifyProps = {
@@ -71,7 +76,7 @@ const HomeRequest:React.FC = () => {
     return newForm.username.isValid && newForm.password.isValid
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     const callFn = async() => {
       await serviceLogin
         .loginRequest()
@@ -85,29 +90,32 @@ const HomeRequest:React.FC = () => {
     }
     callFn();
     return () => console.log("+ useEffect done!")
-  }, []);
+  }, []);*/
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const isFormValid = validateForm()
     if (isFormValid) {
       setMessage('👉  Tentative de connexion en cours ...')
-    
-      const verifyUsername = datas?.find((u) => u.username === form.username.value);
-      const verifyPassword = datas?.find((u) => u.password === form.password.value);
+
       
-      if (verifyUsername === undefined || verifyPassword === undefined) {
-        setMessage('🔐  Identifiant ou mot de passe incorrect.')
-      } else {
-        console.log("login ok")
-        localStorage.setItem("user-info",
-        JSON.stringify([form.username.value, form.password.value]))
-        /*cookies.set("user-cookie", verifyUsername.username,
-          { path: '/', sameSite: "strict", secure: true });
-        console.log(cookies.get("user-cookie"));
-        Navigate('/succeed')*/
-        console.log("success !!!")
+      const statusData: StatusProps = {
+        username: form.username.value,
+        status: "admin",
       }
+      serviceLogin
+        .loginRequest(statusData)
+        .then((data) => {
+          console.log(data)
+          setDatas(data)
+          setMessage("👋 Welcome ADMIN !")
+        })
+        .catch((err) => {
+          console.log("Error during catching of login data !", err.message);
+          setMessage('🔐 You are not an admin ...')
+        })
     }
   }
 
@@ -144,6 +152,9 @@ const HomeRequest:React.FC = () => {
           <button type="submit" className="btn--submitlogin">
             Enter
           </button>
+          {datas.map((data) => (
+            <p key={data.id}>{data.username} - {data.password} - {data.status}</p>
+          ))}
 
         </form>
       </div>

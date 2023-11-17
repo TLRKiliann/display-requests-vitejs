@@ -2,17 +2,21 @@ import { app } from '../api/axiosconfig';
 
 const getLogin: string = "/api/login";
 
-const loginRequest = async() => {
+type StatusProps = {
+    username: string;
+    status: string;
+}
+
+const loginRequest = async(statusData: StatusProps) => {
     try {
-        const req = await app.get(getLogin);
+        const req = await app.post(getLogin, statusData);
         const res = await req.data;
         return res
-    } catch (err: unknown | any) {
+    } catch (err: any) {
         console.log("Error response post (trbl to send data)")
-        console.log(err)
-        //console.log("err-data", err.response.data);
-        //console.log("err-status", err.response.statusText);
-        //console.log("err-headers", err.response.config.headers);
+        console.log("err-data", err.response.data);
+        console.log("err-status", err.response.statusText);
+        console.log("err-headers", err.response.config.headers);
         throw err;
     }
 }

@@ -13,8 +13,8 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     const result = await conn.query("SELECT * FROM users WHERE username=? && status=?",
       [user, status]);
     if ((user !== undefined) && (status !== "user")) {
-      //res.status(200).json(result);
-      res.send("API is working properly");
+      res.status(200).json(result);
+      //res.send("API is working properly");
     } else {
       res.status(404).end()
     }
