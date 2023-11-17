@@ -12,9 +12,9 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     conn = await pool.getConnection();
     const result = await conn.query("SELECT * FROM users WHERE username=? && status=?",
       [user, status]);
-    if ((user !== undefined || null) && (status !== "user")) {
-      res.status(200).json(result);
-      //res.send("API is working properly");
+    if ((user !== undefined) && (status !== "user")) {
+      //res.status(200).json(result);
+      res.send("API is working properly");
     } else {
       res.status(404).end()
     }
@@ -23,7 +23,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   } finally {
     if (conn) return conn.end();
   }
-  next()
+  //next()
 });
 
 module.exports = router;

@@ -21,7 +21,7 @@ app.use(function(req: Request, res: Response, next: NextFunction) {
   next();
 });
 
-app.use('/api/loginDashboard', userStatus);
+app.use('/api/login', userStatus);
 
 app.listen(PORT, (): void => {
   console.log(`[+] Server is running on port: ${PORT} !`)

@@ -1,49 +1,153 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+//import { useNavigate } from 'react-router-dom'
 import serviceLogin from '../services/serviceLogin'
-/*
-type RequestProps = {
-  id: number;
-  userId: number;
-  title: string;
-  body: string;
+
+//import Cookies from 'universal-cookie'
+import UsernameComp from './UsernameComp'
+import PasswordComp from './PasswordComp'
+
+type Field = {
+  value?: any
+  error?: string
+  isValid?: boolean
 }
-*/
 
-function HomeRequest() {
+type Form = {
+  username: Field
+  password: Field
+}
 
-  const [result, setResult] = useState([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  //https://jsonplaceholder.typicode.com/posts
+type VerifyProps = {
+  id: number;
+  username: string;
+  password: string;
+  status: string;
+}[]
+
+const HomeRequest:React.FC = () => {
+
+  //const cookies = new Cookies();
+  //const Navigate = useNavigate()
   
+  const [form, setForm] = useState<Form>({
+    username: {value: ''},
+    password: {value: ''}
+  })
+
+  const [datas, setDatas] = useState<VerifyProps>([])
+  const [message, setMessage] = useState<string>('Not connected !')
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const fieldName: string = e.target.name
+    const fieldValue: string = e.target.value
+    const newField: Field = { [fieldName]: { value: fieldValue } }
+
+    setForm({ ...form, ...newField })
+  }
+
+  const validateForm = () => {
+    let newForm: Form = form
+
+    // Validator username
+    if (form.username.value.length < 3) {
+      const errorMsg: string = 'Votre prénom doit faire au moins 3 caractères de long.'
+      const newField: Field = { value: form.username.value, error: errorMsg, isValid: false }
+      newForm = { ...newForm, ...{ username: newField } }
+    } else {
+      const newField: Field = { value: form.username.value, error: '', isValid: true }
+      newForm = { ...newForm, ...{ username: newField } }
+    }
+
+    // Validator password
+    if (form.password.value.length < 3) {
+      const errorMsg: string = 'Votre mot de passe doit faire au moins 6 caractères de long.'
+      const newField: Field = { value: form.password.value, error: errorMsg, isValid: false }
+      newForm = { ...newForm, ...{ password: newField } }
+    } else {
+      const newField: Field = { value: form.password.value, error: '', isValid: true }
+      newForm = { ...newForm, ...{ password: newField } }
+    }
+    setForm(newForm)
+    return newForm.username.isValid && newForm.password.isValid
+  }
+
   useEffect(() => {
-    setLoading(true)
-    const fetchRequest = async () => {
+    const callFn = async() => {
       await serviceLogin
-      .loginRequest()
-      .then(data => {
-        console.log(data)
-        //setResult(data)
-        setLoading(false)
+        .loginRequest()
+        .then(data => {
+          setDatas(data)
       })
       .catch((err) => {
         console.log("Error during catching of login data !", err.message)
-        setLoading(false)
+        setDatas([])
       })
     }
-    fetchRequest();
-    return () => console.log("useEffect !!!")
+    callFn();
+    return () => console.log("+ useEffect done!")
   }, []);
 
-
-  console.log(result, "result 2")
-
-  if (loading === true) {
-    return <h2>Loading...</h2>
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const isFormValid = validateForm()
+    if (isFormValid) {
+      setMessage('👉  Tentative de connexion en cours ...')
+    
+      const verifyUsername = datas?.find((u) => u.username === form.username.value);
+      const verifyPassword = datas?.find((u) => u.password === form.password.value);
+      
+      if (verifyUsername === undefined || verifyPassword === undefined) {
+        setMessage('🔐  Identifiant ou mot de passe incorrect.')
+      } else {
+        console.log("login ok")
+        localStorage.setItem("user-info",
+        JSON.stringify([form.username.value, form.password.value]))
+        /*cookies.set("user-cookie", verifyUsername.username,
+          { path: '/', sameSite: "strict", secure: true });
+        console.log(cookies.get("user-cookie"));
+        Navigate('/succeed')*/
+        console.log("success !!!")
+      }
+    }
   }
 
-  return (
-    <main>
-      <h1>Request with Vite (React)</h1>
+  return(
+    <main className="login--main">
+
+      <div className="login--container">
+        
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className="login--form"
+        >
+          <h1 className="form--title">Login</h1>
+
+          {message && <div className="div--msg">
+            <p className="connection--msg">
+              {message}
+            </p>
+          </div>
+          }
+
+          <UsernameComp 
+            value={form.username.value}
+            handleInputChange={(e) => handleInputChange(e)}
+            error={form.username.error}
+          />
+
+          <PasswordComp 
+            value={form.password.value}
+            handleInputChange={(e) => handleInputChange(e)}
+            error={form.password.error}
+          />
+          
+          <button type="submit" className="btn--submitlogin">
+            Enter
+          </button>
+
+        </form>
+      </div>
+
     </main>
   )
 }
