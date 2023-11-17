@@ -11,18 +11,18 @@ type RequestProps = {
 
 function HomeRequest() {
 
-  //const [result, setResult] = useState<RequestProps[]>([]);
+  const [result, setResult] = useState([]);
   const [loading, setLoading] = useState<boolean>(false);
   //https://jsonplaceholder.typicode.com/posts
   
   useEffect(() => {
     setLoading(true)
     const fetchRequest = async () => {
-    await serviceLogin
+      await serviceLogin
       .loginRequest()
       .then(data => {
-        //setResult(data.headers)
-        console.log(data.headers);
+        console.log(data)
+        //setResult(data)
         setLoading(false)
       })
       .catch((err) => {
@@ -35,7 +35,7 @@ function HomeRequest() {
   }, []);
 
 
-  //console.log(typeof result, "result 2")
+  console.log(result, "result 2")
 
   if (loading === true) {
     return <h2>Loading...</h2>

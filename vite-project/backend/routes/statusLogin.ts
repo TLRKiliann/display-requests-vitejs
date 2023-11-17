@@ -4,7 +4,7 @@ const router = express.Router();
 const pool = require('../dbConnection.ts');
 
 // post to authenticate admin
-router.post('/', async(req: Request, res: Response, next: NextFunction) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const user: string = req.body.username;
   const status: string = req.body.status;
   let conn;
@@ -14,14 +14,16 @@ router.post('/', async(req: Request, res: Response, next: NextFunction) => {
       [user, status]);
     if ((user !== undefined || null) && (status !== "user")) {
       res.status(200).json(result);
+      //res.send("API is working properly");
     } else {
-      res.status(403).end()
+      res.status(404).end()
     }
   } catch (err) {
     throw err;
   } finally {
     if (conn) return conn.end();
   }
+  next()
 });
 
 module.exports = router;
