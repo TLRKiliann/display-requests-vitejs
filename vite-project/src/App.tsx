@@ -1,7 +1,8 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 //import LoginTester from './components/LoginTester'
-import HomeRequest from './components/HomeRequest'
+import Login from './components/Login'
+import Home from './components/Home'
 
 /*
 type AttrProps = {
@@ -15,7 +16,8 @@ const App: React.FC = () => {
   return(
     <div>
       <Routes>
-        <Route path='/' element={<HomeRequest />} />
+      <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
       </Routes>
     </div>
   )

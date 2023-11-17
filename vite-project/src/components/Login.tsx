@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-//import { useNavigate } from 'react-router-dom'
 import serviceLogin from '../services/serviceLogin'
-
-//import Cookies from 'universal-cookie'
 import UsernameComp from './UsernameComp'
 import PasswordComp from './PasswordComp'
 
@@ -19,6 +16,7 @@ type Form = {
 
 type StatusProps = {
   username: string;
+  password: string;
   status: string;
 }
 
@@ -29,11 +27,8 @@ type VerifyProps = {
   status: string;
 }[]
 
-const HomeRequest:React.FC = () => {
+const Login:React.FC = () => {
 
-  //const cookies = new Cookies();
-  //const Navigate = useNavigate()
-  
   const [form, setForm] = useState<Form>({
     username: {value: ''},
     password: {value: ''}
@@ -76,36 +71,19 @@ const HomeRequest:React.FC = () => {
     return newForm.username.isValid && newForm.password.isValid
   }
 
-  /*useEffect(() => {
-    const callFn = async() => {
-      await serviceLogin
-        .loginRequest()
-        .then(data => {
-          setDatas(data)
-      })
-      .catch((err) => {
-        console.log("Error during catching of login data !", err.message)
-        setDatas([])
-      })
-    }
-    callFn();
-    return () => console.log("+ useEffect done!")
-  }, []);*/
-
-
+  const statusData: StatusProps = {
+    username: form.username.value,
+    password: form.password.value,
+    status: "admin",
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const isFormValid = validateForm()
     if (isFormValid) {
-      setMessage('👉  Tentative de connexion en cours ...')
+      setMessage('👉  Tentative de connexion en cours ...');
 
-      
-      const statusData: StatusProps = {
-        username: form.username.value,
-        status: "admin",
-      }
-      serviceLogin
+      await serviceLogin
         .loginRequest(statusData)
         .then((data) => {
           console.log(data)
@@ -163,4 +141,4 @@ const HomeRequest:React.FC = () => {
   )
 }
 
-export default HomeRequest;
+export default Login;

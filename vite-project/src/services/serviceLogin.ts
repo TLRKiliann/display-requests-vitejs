@@ -4,6 +4,7 @@ const getLogin: string = "/api/login";
 
 type StatusProps = {
     username: string;
+    password: string;
     status: string;
 }
 
@@ -13,10 +14,11 @@ const loginRequest = async(statusData: StatusProps) => {
         const res = await req.data;
         return res
     } catch (err: any) {
-        console.log("Error response post (trbl to send data)")
-        console.log("err-data", err.response.data);
-        console.log("err-status", err.response.statusText);
-        console.log("err-headers", err.response.config.headers);
+        console.log(err)
+        //console.log("Error response post (trbl to send data)")
+        //console.log("err-data", err.response.data);
+        //console.log("err-status", err.response.statusText);
+        //console.log("err-headers", err.response.config.headers);
         throw err;
     }
 }
